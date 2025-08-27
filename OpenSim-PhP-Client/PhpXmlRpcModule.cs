@@ -3,91 +3,43 @@ using System.Linq;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using log4net;
-using MySql.Data.MySqlClient;
 using Nini.Config;
-using NSL.Certificate.Tools;
-using NSL.Network.XmlRpc;
-using Nwc.XmlRpc;
-using OpenMetaverse;
-using OpenSim.Data.MySQL.MySQLMoneyDataWrapper;
 using OpenSim.Framework;
 using OpenSim.Framework.Servers.HttpServer;
-using OpenSim.Modules.Currency;
-using OpenSim.Region.Framework.Scenes;
-using OpenSim.Services.Interfaces;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
-using System.Net;
-using System.Reflection;
-using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Transactions;
 using System.Xml;
-using static Mono.Security.X509.X520;
-using static OpenMetaverse.DllmapConfigHelper;
-using OpenSim.Server.Base;
-using OpenSim.Framework.Console;
-
-// todo list:
-
-// Wie in namespace OpenSim.Grid.MoneyServer, class MoneyXmlRpcModule die PHP Dateien abfangen und weiterverarbeiten.
-
-// Url to search service
-// SearchURL = "${Const|BaseURL}/search.php"
-
-// For V3 destination guide
-// DestinationGuide = "${Const|BaseURL}/guide.php"
-
-// For V3 avatar picker (( work in progress ))
-// AvatarPicker = "${Const|BaseURL}/avatars.php"
-
-// login page: optional: if it exists it will be used to tell the client to use
-// this as splash page
-// welcome = ${ Const | BaseURL}/welcome.php
-
-// web page of grid: optional: page providing further information about your grid
-// about = ${ Const | BaseURL}/about.php
-
-// account creation: optional: page providing further information about obtaining
-// a user account on your grid
-// register = ${ Const | BaseURL}/register.php
-
-// help: optional: page providing further assistance for users of your grid
-// help = ${ Const | BaseURL}/help.php
-
-// password help: optional: page providing password assistance for users of your grid
-// password = ${ Const | BaseURL}/password.php
-
-// a http page for grid status
-// GridStatus = ${ Const | BaseURL}/GridStatus.php
-// a RSS page for grid status
-// GridStatusRSS = ${ Const | BaseURL}/GridStatusRSS.php
-
-// optional web page for profiles
-// [AGENT_NAME] will be converted to Firstname.LastName by viewers
-// web_profile_url = http://webprofilesurl:ItsPort?name=[AGENT_NAME]
-
-// todo list end
 
 namespace OpenSim.PhP.Client
 {
-    internal class PhpXmlRpcModule
+    public class PhpXmlRpcModule
     {
+        private static readonly ILog m_log = LogManager.GetLogger(typeof(PhpXmlRpcModule));
         private BaseHttpServer m_httpServer;
 
+        public PhpXmlRpcModule() { }
 
-        public void Initialise()
+        public void Initialise(IConfigSource config)
         {
+            m_log.Info("[PHP XMLRPC]: Initialising PhpXmlRpcModule...");
+
+            IConfig serverConfig = config.Configs["Network"];
+            int port = serverConfig != null ? serverConfig.GetInt("http_listener_port", 8002) : 8002;
+            m_httpServer = new BaseHttpServer((uint)port);
+
+            if (m_httpServer == null)
+            {
+                m_log.Error("[PHP XMLRPC]: Kein HTTP-Server gefunden! Modul kann nicht gestartet werden.");
+                throw new InvalidOperationException("HTTP-Server nicht gefunden.");
+            }
+
             RegisterStreamHandlers();
         }
 
         private void RegisterStreamHandlers()
         {
-            // Registrierung für alle relevanten PHP-Endpunkte
+            m_log.Info("[PHP XMLRPC]: Registering PHP endpoints...");
             m_httpServer.AddSimpleStreamHandler(new SimpleStreamHandler("/search.php", PHPProcesssearch));
             m_httpServer.AddSimpleStreamHandler(new SimpleStreamHandler("/guide.php", PHPProcessguide));
             m_httpServer.AddSimpleStreamHandler(new SimpleStreamHandler("/avatars.php", PHPProcessavatars));
@@ -97,61 +49,118 @@ namespace OpenSim.PhP.Client
             m_httpServer.AddSimpleStreamHandler(new SimpleStreamHandler("/help.php", PHPProcesshelp));
             m_httpServer.AddSimpleStreamHandler(new SimpleStreamHandler("/password.php", PHPProcesspassword));
             m_httpServer.AddSimpleStreamHandler(new SimpleStreamHandler("/GridStatus.php", PHPProcessGridStatus));
-            m_httpServer.AddSimpleStreamHandler(new SimpleStreamHandler("/GridStatusRSS.php", PHPProcessRSS));
+            m_httpServer.AddSimpleStreamHandler(new SimpleStreamHandler("/GridStatusRSS.php", PHPProcessGridStatusRSS));
         }
 
-        public void PostInitialise()
-        {
-        }
-
-        public void RegisterHandlers()
-            {
-        }
-
+        public void PostInitialise() { }
+        public void RegisterHandlers() { }
+        public void UnregisterHandlers() { }
 
         private void PHPProcesssearch(IOSHttpRequest httpRequest, IOSHttpResponse httpResponse)
         {
-            // todo: Implement search functionality
+            httpResponse.ContentType = "text/plain";
+            httpResponse.StatusCode = 501;
+            byte[] buffer = Encoding.UTF8.GetBytes("Not implemented");
+            httpResponse.ContentLength = buffer.Length;
+            httpResponse.OutputStream.Write(buffer, 0, buffer.Length);
+            httpResponse.OutputStream.Flush();
         }
         private void PHPProcessguide(IOSHttpRequest httpRequest, IOSHttpResponse httpResponse)
         {
-            // todo: Implement search functionality
+            httpResponse.ContentType = "text/plain";
+            httpResponse.StatusCode = 501;
+            byte[] buffer = Encoding.UTF8.GetBytes("Not implemented");
+            httpResponse.ContentLength = buffer.Length;
+            httpResponse.OutputStream.Write(buffer, 0, buffer.Length);
+            httpResponse.OutputStream.Flush();
         }
         private void PHPProcessavatars(IOSHttpRequest httpRequest, IOSHttpResponse httpResponse)
         {
-            // todo: Implement search functionality
+            httpResponse.ContentType = "text/plain";
+            httpResponse.StatusCode = 501;
+            byte[] buffer = Encoding.UTF8.GetBytes("Not implemented");
+            httpResponse.ContentLength = buffer.Length;
+            httpResponse.OutputStream.Write(buffer, 0, buffer.Length);
+            httpResponse.OutputStream.Flush();
         }
         private void PHPProcesswelcome(IOSHttpRequest httpRequest, IOSHttpResponse httpResponse)
         {
-            // todo: Implement search functionality
+            httpResponse.ContentType = "text/plain";
+            httpResponse.StatusCode = 501;
+            byte[] buffer = Encoding.UTF8.GetBytes("Not implemented");
+            httpResponse.ContentLength = buffer.Length;
+            httpResponse.OutputStream.Write(buffer, 0, buffer.Length);
+            httpResponse.OutputStream.Flush();
         }
         private void PHPProcessabout(IOSHttpRequest httpRequest, IOSHttpResponse httpResponse)
         {
-            // todo: Implement search functionality
+            httpResponse.ContentType = "text/plain";
+            httpResponse.StatusCode = 501;
+            byte[] buffer = Encoding.UTF8.GetBytes("Not implemented");
+            httpResponse.ContentLength = buffer.Length;
+            httpResponse.OutputStream.Write(buffer, 0, buffer.Length);
+            httpResponse.OutputStream.Flush();
         }
         private void PHPProcessregister(IOSHttpRequest httpRequest, IOSHttpResponse httpResponse)
         {
-            // todo: Implement search functionality
+            httpResponse.ContentType = "text/plain";
+            httpResponse.StatusCode = 501;
+            byte[] buffer = Encoding.UTF8.GetBytes("Not implemented");
+            httpResponse.ContentLength = buffer.Length;
+            httpResponse.OutputStream.Write(buffer, 0, buffer.Length);
+            httpResponse.OutputStream.Flush();
         }
         private void PHPProcesshelp(IOSHttpRequest httpRequest, IOSHttpResponse httpResponse)
         {
-            // todo: Implement search functionality
+            string faqUrl = "http://opensimulator.org/wiki/FAQ";
+            string faqContent = string.Empty;
+
+            try
+            {
+                using (var webClient = new System.Net.Http.HttpClient())
+                {
+                    var task = webClient.GetStringAsync(faqUrl);
+                    task.Wait();
+                    faqContent = task.Result;
+                }
+            }
+            catch (Exception ex)
+            {
+                faqContent = "<html><body><h2>Fehler beim Abrufen der FAQ-Seite.</h2><pre>" + ex.Message + "</pre></body></html>";
+            }
+
+            httpResponse.ContentType = "text/html; charset=utf-8";
+            byte[] buffer = Encoding.UTF8.GetBytes(faqContent);
+            httpResponse.ContentLength = buffer.Length;
+            httpResponse.OutputStream.Write(buffer, 0, buffer.Length);
+            httpResponse.OutputStream.Flush();
         }
         private void PHPProcesspassword(IOSHttpRequest httpRequest, IOSHttpResponse httpResponse)
         {
-            // todo: Implement search functionality
+            httpResponse.ContentType = "text/plain";
+            httpResponse.StatusCode = 501;
+            byte[] buffer = Encoding.UTF8.GetBytes("Not implemented");
+            httpResponse.ContentLength = buffer.Length;
+            httpResponse.OutputStream.Write(buffer, 0, buffer.Length);
+            httpResponse.OutputStream.Flush();
         }
         private void PHPProcessGridStatus(IOSHttpRequest httpRequest, IOSHttpResponse httpResponse)
         {
-            // todo: Implement search functionality
+            httpResponse.ContentType = "text/plain";
+            httpResponse.StatusCode = 501;
+            byte[] buffer = Encoding.UTF8.GetBytes("Not implemented");
+            httpResponse.ContentLength = buffer.Length;
+            httpResponse.OutputStream.Write(buffer, 0, buffer.Length);
+            httpResponse.OutputStream.Flush();
         }
-        private void PHPProcessRSS(IOSHttpRequest httpRequest, IOSHttpResponse httpResponse)
+        private void PHPProcessGridStatusRSS(IOSHttpRequest httpRequest, IOSHttpResponse httpResponse)
         {
-            // todo: Implement search functionality
-        }
-
-        public void UnregisterHandlers()
-            {
+            httpResponse.ContentType = "text/plain";
+            httpResponse.StatusCode = 501;
+            byte[] buffer = Encoding.UTF8.GetBytes("Not implemented");
+            httpResponse.ContentLength = buffer.Length;
+            httpResponse.OutputStream.Write(buffer, 0, buffer.Length);
+            httpResponse.OutputStream.Flush();
         }
     }
 }
